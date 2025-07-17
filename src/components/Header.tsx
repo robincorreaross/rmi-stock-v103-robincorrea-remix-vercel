@@ -84,14 +84,10 @@ export function Header({
           {/* Mobile Navigation */}
           <div className="flex md:hidden items-center space-x-2">
             <Link to="/">
-              <Button variant={currentPath === '/' ? 'default' : 'ghost'} size="sm">
-                <BarChart3 className="w-4 h-4" />
-              </Button>
+              
             </Link>
             <Link to="/products">
-              <Button variant={currentPath === '/products' ? 'default' : 'ghost'} size="sm">
-                <Package className="w-4 h-4" />
-              </Button>
+              
             </Link>
           </div>
         </div>
