@@ -262,82 +262,41 @@ export function useProducts() {
   };
 
   const importFromText = async (content: string): Promise<number> => {
-    const lines = content.split('\n').filter(line => line.trim());
-    let skippedCount = 0;
+    try {
+      toast({
+        title: "Iniciando importação...",
+        description: "Processando produtos no servidor. Isso pode levar alguns minutos para arquivos grandes.",
+        variant: "default"
+      });
 
-    const productsToInsert = [];
-    const batchSize = 1000; // Processar em lotes para evitar problemas com arquivos grandes
+      const { data, error } = await supabase.functions.invoke('import-products', {
+        body: { content }
+      });
 
-    for (const line of lines) {
-      const parts = line.split(';');
-      if (parts.length >= 3) {
-        const internalCode = parts[0]?.trim();
-        const barcode = parts[1]?.trim();
-        const description = parts[2]?.trim();
-
-        // Usar código interno se código de barras for 0000000000000
-        const productCode = barcode === '0000000000000' ? internalCode : barcode;
-
-        if (productCode && description) {
-          // Verificar se já existe
-          const existingProduct = await findProductByCode(productCode);
-          if (!existingProduct) {
-            productsToInsert.push({
-              code: productCode.toUpperCase(),
-              description: description.toUpperCase().substring(0, 200)
-            });
-          } else {
-            skippedCount++;
-          }
-        }
-      }
-    }
-
-    if (productsToInsert.length > 0) {
-      let totalImported = 0;
-      
-      try {
-        // Processar em lotes
-        for (let i = 0; i < productsToInsert.length; i += batchSize) {
-          const batch = productsToInsert.slice(i, i + batchSize);
-          
-          console.log(`Processando lote ${Math.floor(i / batchSize) + 1}/${Math.ceil(productsToInsert.length / batchSize)}: ${batch.length} produtos`);
-          
-          const { error } = await supabase
-            .from('products')
-            .insert(batch);
-
-          if (error) {
-            console.error(`Erro no lote ${Math.floor(i / batchSize) + 1}:`, error);
-            // Continue com o próximo lote mesmo se houver erro
-            continue;
-          }
-          
-          totalImported += batch.length;
-        }
-
-        await loadProducts();
-        
-        toast({
-          title: "Importação concluída!",
-          description: `${totalImported} produtos importados${skippedCount > 0 ? `, ${skippedCount} já existiam` : ''}.`,
-          variant: "default"
-        });
-        
-        return totalImported;
-      } catch (error) {
+      if (error) {
         console.error('Erro na importação:', error);
         toast({
           title: "Erro na importação",
-          description: `Importação parcial: ${totalImported} produtos importados. Verifique os logs para mais detalhes.`,
+          description: "Não foi possível importar os produtos. Verifique o formato do arquivo.",
           variant: "destructive"
         });
-        return totalImported;
+        return 0;
       }
-    } else {
+
+      await loadProducts();
+      
       toast({
-        title: "Nenhum produto importado",
-        description: skippedCount > 0 ? "Todos os produtos já existiam." : "Formato de arquivo inválido.",
+        title: "Importação concluída!",
+        description: data.message,
+        variant: "default"
+      });
+      
+      return data.imported;
+    } catch (error) {
+      console.error('Erro na importação:', error);
+      toast({
+        title: "Erro na importação",
+        description: "Não foi possível conectar ao servidor de importação.",
         variant: "destructive"
       });
       return 0;
