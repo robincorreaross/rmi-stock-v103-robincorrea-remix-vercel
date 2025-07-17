@@ -9,11 +9,7 @@ const config: CapacitorConfig = {
     cleartext: true
   },
   plugins: {
-    BarcodeScanner: {
-      scanType: 'camera',
-      showBackground: true,
-      showTorchButton: true
-    }
+    // Native plugins removed for web deployment compatibility
   }
 };
 
