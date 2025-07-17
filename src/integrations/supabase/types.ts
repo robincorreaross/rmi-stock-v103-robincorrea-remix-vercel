@@ -82,26 +82,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      check_subscription_limits: {
-        Args: { company_uuid: string; check_type: string }
-        Returns: boolean
-      }
-      get_current_user_role: {
-        Args: Record<PropertyKey, never>
-        Returns: Database["public"]["Enums"]["user_role"]
-      }
-      get_user_company: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      is_current_user_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
-      subscription_plan: "free" | "mensal" | "anual"
-      user_role: "client" | "admin"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -228,9 +212,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      subscription_plan: ["free", "mensal", "anual"],
-      user_role: ["client", "admin"],
-    },
+    Enums: {},
   },
 } as const
