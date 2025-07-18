@@ -37,7 +37,7 @@ export function Scanner({ onBarcodeScanned, products = [], onProductSelect }: Sc
     const handleExternalScan = (event: any) => {
       if (isExternalMode && event.detail?.barcode) {
         onBarcodeScanned(event.detail.barcode);
-        stopExternalScan();
+        // Mantém o leitor ativo - não chama stopExternalScan()
       }
     };
 
