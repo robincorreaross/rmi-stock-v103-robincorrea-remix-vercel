@@ -47,7 +47,7 @@ export function useProducts() {
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('description', { ascending: true })
         .range(from, to);
 
       if (error) throw error;
@@ -245,7 +245,7 @@ export function useProducts() {
         .from('products')
         .select('*')
         .or(`description.ilike.%${upperQuery}%,code.ilike.%${upperQuery}%`)
-        .order('created_at', { ascending: false })
+        .order('description', { ascending: true })
         .limit(50);
 
       if (error) throw error;
