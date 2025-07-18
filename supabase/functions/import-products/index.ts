@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Content-Type': 'application/json; charset=utf-8',
 }
 
 interface ProductRow {
@@ -27,7 +28,7 @@ Deno.serve(async (req) => {
     if (!content || typeof content !== 'string') {
       return new Response(
         JSON.stringify({ error: 'Content is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: corsHeaders }
       )
     }
 
@@ -61,7 +62,7 @@ Deno.serve(async (req) => {
     if (productsToInsert.length === 0) {
       return new Response(
         JSON.stringify({ imported: 0, message: 'No valid products found' }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 200, headers: corsHeaders }
       )
     }
 
@@ -117,14 +118,14 @@ Deno.serve(async (req) => {
         total: productsToInsert.length,
         message: `Successfully imported ${totalImported} products${totalSkipped > 0 ? `, ${totalSkipped} already existed` : ''}`
       }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 200, headers: corsHeaders }
     )
 
   } catch (error) {
     console.error('Import error:', error)
     return new Response(
       JSON.stringify({ error: 'Internal server error', details: error.message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: corsHeaders }
     )
   }
 })

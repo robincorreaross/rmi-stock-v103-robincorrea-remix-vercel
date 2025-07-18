@@ -270,7 +270,10 @@ export function useProducts() {
       });
 
       const { data, error } = await supabase.functions.invoke('import-products', {
-        body: { content }
+        body: { content },
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }
       });
 
       if (error) {
