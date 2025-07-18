@@ -61,7 +61,7 @@ export function Header({
               </div>
 
               {/* Layout Mobile */}
-              <div className="flex sm:hidden flex-col items-end space-y-2">
+              <div className="flex sm:hidden flex-col ml-auto space-y-2">
                 <div className="flex flex-col items-end space-y-1">
                   <div className="text-right">
                     <div className="text-xs text-muted-foreground">Total de itens</div>
