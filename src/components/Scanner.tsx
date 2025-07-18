@@ -211,7 +211,7 @@ export function Scanner({ onBarcodeScanned, products = [], onProductSelect }: Sc
                   className="flex-1"
                 >
                   <Keyboard className="w-4 h-4 mr-2" />
-                  Inserir código
+                  Insera o Código ou Faça uma Busca
                 </Button>
                 
                 <Button 
