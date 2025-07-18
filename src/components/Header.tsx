@@ -43,7 +43,7 @@ export function Header({
           {/* Stats and Export - Only show on stock counting page */}
           {currentPath === '/' && <>
               {/* Layout Desktop */}
-              <div className="hidden sm:flex items-center space-x-4">
+              <div className="hidden sm:flex items-center space-x-1">
                 <div className="text-right">
                   <div className="text-sm text-muted-foreground">Total de itens</div>
                   <div className="text-lg font-bold text-primary">{totalItems}</div>
