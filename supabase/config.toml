@@ -1,4 +1,1 @@
 project_id = "mqsufjabmvrghzdrydmy"
-
-[functions.import-products]
-verify_jwt = false
