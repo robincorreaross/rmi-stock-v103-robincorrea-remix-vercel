@@ -1,7 +1,6 @@
 import { Package, Download, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useLocation } from 'react-router-dom';
-import { OfflineToggle } from './OfflineToggle';
 interface HeaderProps {
   totalItems: number;
   totalQuantity: number;
@@ -32,7 +31,6 @@ export function Header({
             
             {/* Navigation */}
             <nav className="hidden md:flex items-center space-x-4">
-              <OfflineToggle />
               <Link to="/">
                 
               </Link>
@@ -85,7 +83,6 @@ export function Header({
 
           {/* Mobile Navigation */}
           <div className="flex md:hidden items-center space-x-2">
-            <OfflineToggle />
             <Link to="/">
               
             </Link>
