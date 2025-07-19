@@ -97,11 +97,7 @@ export function useProducts() {
 
       await loadProducts();
       
-      toast({
-        title: "Produto cadastrado!",
-        description: `${data.description}`,
-        variant: "default"
-      });
+      // Removido toast de sucesso
 
       return true;
     } catch (error) {
@@ -139,11 +135,7 @@ export function useProducts() {
 
       await loadProducts();
 
-      toast({
-        title: "Produto atualizado!",
-        description: `${data.description}`,
-        variant: "default"
-      });
+      // Removido toast de sucesso
 
       return true;
     } catch (error) {
@@ -170,11 +162,7 @@ export function useProducts() {
 
       await loadProducts();
       
-      toast({
-        title: "Produto removido",
-        description: product ? product.description : "Produto foi removido.",
-        variant: "default"
-      });
+      // Removido toast de sucesso
     } catch (error) {
       console.error('Erro ao remover produto:', error);
       toast({
@@ -196,11 +184,7 @@ export function useProducts() {
 
       await loadProducts();
       
-      toast({
-        title: "Produtos limpos",
-        description: "Todos os produtos foram removidos.",
-        variant: "default"
-      });
+      // Removido toast de sucesso
     } catch (error) {
       console.error('Erro ao limpar produtos:', error);
       toast({
@@ -263,11 +247,7 @@ export function useProducts() {
 
   const importFromText = async (content: string): Promise<number> => {
     try {
-      toast({
-        title: "Iniciando importação...",
-        description: "Processando produtos no servidor. Isso pode levar alguns minutos para arquivos grandes.",
-        variant: "default"
-      });
+      // Removido toast informativo
 
       const { data, error } = await supabase.functions.invoke('import-products', {
         body: { content },
@@ -288,11 +268,7 @@ export function useProducts() {
 
       await loadProducts();
       
-      toast({
-        title: "Importação concluída!",
-        description: data.message,
-        variant: "default"
-      });
+      // Removido toast de sucesso
       
       return data.imported;
     } catch (error) {

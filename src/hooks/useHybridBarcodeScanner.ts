@@ -110,11 +110,7 @@ export function useHybridBarcodeScanner() {
     // Always use web scanner (camera) for deployment compatibility
     if (onSuccess) {
       await startWebScan((decodedText) => {
-        toast({
-          title: "Código escaneado!",
-          description: `Código: ${decodedText}`,
-          variant: "default"
-        });
+        // Removido toast de sucesso - apenas callback
         onSuccess(decodedText);
         setIsScanning(false);
       });

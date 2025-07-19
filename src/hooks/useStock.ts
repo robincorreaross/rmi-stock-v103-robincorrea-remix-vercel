@@ -54,11 +54,7 @@ export function useStock() {
 
       await loadStockItems();
       
-      toast({
-        title: "Item adicionado!",
-        description: `Código: ${barcode} - Qtd: ${quantity}`,
-        variant: "default"
-      });
+      // Removido toast de sucesso
     } catch (error) {
       console.error('Erro ao adicionar item:', error);
       toast({
@@ -105,11 +101,7 @@ export function useStock() {
 
       await loadStockItems();
       
-      toast({
-        title: "Item removido",
-        description: "Item foi removido da contagem.",
-        variant: "default"
-      });
+      // Removido toast de sucesso
     } catch (error) {
       console.error('Erro ao remover item:', error);
       toast({
@@ -131,11 +123,7 @@ export function useStock() {
 
       await loadStockItems();
       
-      toast({
-        title: "Lista limpa",
-        description: "Todos os itens foram removidos.",
-        variant: "default"
-      });
+      // Removido toast de sucesso
     } catch (error) {
       console.error('Erro ao limpar lista:', error);
       toast({
@@ -148,11 +136,7 @@ export function useStock() {
 
   const exportToFile = async () => {
     if (items.length === 0) {
-      toast({
-        title: "Lista vazia",
-        description: "Adicione itens antes de exportar.",
-        variant: "destructive"
-      });
+      // Removido toast informativo
       return;
     }
 
@@ -180,11 +164,7 @@ export function useStock() {
           }).then(result => result.uri)}`
         });
 
-        toast({
-          title: "Exportação concluída!",
-          description: `Arquivo ${fileName} salvo e compartilhado.`,
-          variant: "default"
-        });
+        // Removido toast de sucesso
       } catch (nativeError) {
         // Fallback para download no navegador
         console.log('Tentando fallback para navegador:', nativeError);
@@ -199,11 +179,7 @@ export function useStock() {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
 
-        toast({
-          title: "Arquivo baixado!",
-          description: `${fileName} foi baixado para seus downloads.`,
-          variant: "default"
-        });
+        // Removido toast de sucesso
       }
     } catch (error) {
       console.error('Erro na exportação:', error);

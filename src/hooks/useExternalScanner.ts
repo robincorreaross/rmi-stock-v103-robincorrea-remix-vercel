@@ -23,11 +23,7 @@ export function useExternalScanner() {
         });
         window.dispatchEvent(scanEvent);
         
-        toast({
-          title: "Código lido!",
-          description: `Código: ${scannedCode.trim()}`,
-          variant: "default"
-        });
+        // Removido toast de sucesso - apenas callback
         
         setScannedCode('');
       }
@@ -60,11 +56,7 @@ export function useExternalScanner() {
     setIsListening(true);
     setScannedCode('');
     
-    toast({
-      title: "Leitor externo ativo",
-      description: "Aponte o leitor para o código de barras",
-      variant: "default"
-    });
+    // Removido toast informativo
   };
 
   const stopExternalScan = () => {
