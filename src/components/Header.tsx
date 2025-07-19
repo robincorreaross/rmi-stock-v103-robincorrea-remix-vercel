@@ -25,8 +25,7 @@ export function Header({
               </div>
               <div>
                 <h1 className="text-xl font-bold text-foreground">RMI-Stock</h1>
-                <p className="text-sm text-muted-foreground">Contagem e Auditoria
-de Estoque</p>
+                <p className="text-sm text-muted-foreground">Contagem de Estoque</p>
               </div>
             </div>
             
