@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Product, ProductFormData } from '@/types/product';
 import { useToast } from './use-toast';
+import { useLocalStorage } from './useLocalStorage';
 import { supabase } from '@/integrations/supabase/client';
 
 const ITEMS_PER_PAGE = 100;
@@ -12,6 +13,7 @@ export function useProducts() {
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { isOfflineMode, saveProductsLocal, loadProductsLocal } = useLocalStorage();
 
   // Carregar produtos do Supabase na inicialização
   useEffect(() => {
@@ -21,6 +23,16 @@ export function useProducts() {
   const loadProducts = async () => {
     try {
       setIsLoading(true);
+      
+      if (isOfflineMode) {
+        console.log('Carregando produtos do armazenamento local...');
+        const localProducts = await loadProductsLocal();
+        setProducts(localProducts);
+        setTotalProducts(localProducts.length);
+        setTotalPages(Math.ceil(localProducts.length / ITEMS_PER_PAGE));
+        return;
+      }
+      
       console.log(`Carregando página ${currentPage}...`);
       
       // Primeiro, vamos contar quantos produtos existem
@@ -61,6 +73,12 @@ export function useProducts() {
       }));
 
       setProducts(formattedProducts);
+      
+      // Salvar no armazenamento local se não estiver em modo offline
+      if (!isOfflineMode) {
+        await saveProductsLocal(formattedProducts);
+      }
+      
       console.log(`Produtos definidos no estado: ${formattedProducts.length}`);
     } catch (error) {
       console.error('Erro ao carregar produtos:', error);

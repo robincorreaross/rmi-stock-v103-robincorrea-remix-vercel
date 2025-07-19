@@ -4,12 +4,14 @@ import { generateFileName, convertToExportFormat } from '@/lib/stockUtils';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { useToast } from './use-toast';
+import { useLocalStorage } from './useLocalStorage';
 import { supabase } from '@/integrations/supabase/client';
 
 export function useStock() {
   const [items, setItems] = useState<StockItem[]>([]);
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
+  const { isOfflineMode, saveStockLocal, loadStockLocal } = useLocalStorage();
 
   // Carregar itens do Supabase na inicialização
   useEffect(() => {
@@ -18,6 +20,13 @@ export function useStock() {
 
   const loadStockItems = async () => {
     try {
+      if (isOfflineMode) {
+        console.log('Carregando estoque do armazenamento local...');
+        const localStock = await loadStockLocal();
+        setItems(localStock);
+        return;
+      }
+      
       const { data, error } = await supabase
         .from('stock_items')
         .select('*')
@@ -31,6 +40,11 @@ export function useStock() {
       }));
 
       setItems(formattedItems);
+      
+      // Salvar no armazenamento local se não estiver em modo offline
+      if (!isOfflineMode) {
+        await saveStockLocal(formattedItems);
+      }
     } catch (error) {
       console.error('Erro ao carregar itens:', error);
       toast({

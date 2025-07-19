@@ -1,15 +1,19 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.fac9ffa861764afdad2d6155d0a5aaad',
-  appName: 'StockCounter - Contador de Estoque',
+  appId: 'app.lovable.a5da0fdb40fc44cc9864fa91c25cf605',
+  appName: 'rmi-stock-v103-robincorrea-test-vercel',
   webDir: 'dist',
   server: {
-    url: 'https://fac9ffa8-6176-4afd-ad2d-6155d0a5aaad.lovableproject.com?forceHideBadge=true',
+    url: 'https://a5da0fdb-40fc-44cc-9864-fa91c25cf605.lovableproject.com?forceHideBadge=true',
     cleartext: true
   },
   plugins: {
-    // Native plugins removed for web deployment compatibility
+    SplashScreen: {
+      launchShowDuration: 2000,
+      backgroundColor: "#ffffff",
+      showSpinner: false
+    }
   }
 };
 
