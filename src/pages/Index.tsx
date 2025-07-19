@@ -77,8 +77,16 @@ const Index = () => {
       return;
     }
     
-    // Produto cadastrado - prossegue com confirmação
-    setPendingBarcode(barcode);
+    // Produto cadastrado - adiciona diretamente na contagem
+    const existingItem = items.find(item => item.barcode === barcode);
+    
+    if (existingItem) {
+      // Se já existe na lista, aumenta a quantidade
+      updateQuantity(existingItem.id, existingItem.quantity + 1);
+    } else {
+      // Se não existe na lista, adiciona novo item
+      addItem(barcode, 1);
+    }
   };
 
   const getPendingProduct = async () => {
