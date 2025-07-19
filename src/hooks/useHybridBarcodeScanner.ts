@@ -14,11 +14,10 @@ export function useHybridBarcodeScanner() {
 
   const checkWebPermission = async (): Promise<boolean> => {
     try {
+      // Tentar acesso mais rápido com configurações básicas primeiro
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { 
-          facingMode: 'environment',
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
+          facingMode: 'environment'
         } 
       });
       stream.getTracks().forEach(track => track.stop());
@@ -44,38 +43,22 @@ export function useHybridBarcodeScanner() {
       const html5QrCode = new Html5Qrcode("qr-reader");
       scannerRef.current = html5QrCode;
 
-      // Configurações otimizadas para melhor leitura
+      // Configurações otimizadas para inicialização mais rápida
       const config = {
-        fps: 15, // Aumentado para melhor responsividade
-        qrbox: { width: 300, height: 150 }, // Área otimizada para códigos de barras
-        aspectRatio: 2.0, // Melhor para códigos de barras horizontais
+        fps: 10, // Reduzido para inicialização mais rápida
+        qrbox: { width: 250, height: 120 }, // Área otimizada para códigos de barras
+        aspectRatio: 2.0,
         disableFlip: false,
         videoConstraints: {
-          facingMode: "environment",
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          focusMode: "continuous"
+          facingMode: "environment"
         }
       };
 
-      // Tenta usar a câmera traseira primeiro
-      let cameraId;
-      try {
-        const cameras = await Html5Qrcode.getCameras();
-        // Procura por câmera traseira
-        const backCamera = cameras.find(camera => 
-          camera.label.toLowerCase().includes('back') || 
-          camera.label.toLowerCase().includes('rear') ||
-          camera.label.toLowerCase().includes('environment')
-        );
-        cameraId = backCamera ? backCamera.id : cameras[0]?.id;
-      } catch (e) {
-        console.log('Usando configuração de câmera padrão');
-        cameraId = { facingMode: "environment" };
-      }
+      // Uso direto da câmera traseira sem busca detalhada para ser mais rápido
+      const cameraConfig = { facingMode: "environment" };
 
       await html5QrCode.start(
-        cameraId || { facingMode: "environment" },
+        cameraConfig,
         config,
         (decodedText) => {
           console.log('Código lido:', decodedText);
