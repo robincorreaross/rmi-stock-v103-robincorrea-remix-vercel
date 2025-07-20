@@ -164,15 +164,37 @@ export function Scanner({ onBarcodeScanned, products = [], onProductSelect }: Sc
         </div>
 
         {/* Campo de Input Manual/Busca - Posição Estratégica */}
-        <div className="flex justify-center">
-          <Button 
-            variant="outline" 
-            onClick={() => setShowManualInput(!showManualInput)}
-            className="flex items-center space-x-2"
-          >
-            <Keyboard className="w-4 h-4" />
-            <span>Insira o Código ou Faça uma Busca</span>
-          </Button>
+        <div className="space-y-3">
+          <div className="flex justify-center">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowManualInput(!showManualInput)}
+              className="flex items-center space-x-2"
+            >
+              <Keyboard className="w-4 h-4" />
+              <span>Insira o Código ou Faça uma Busca</span>
+            </Button>
+          </div>
+          
+          {/* Input Manual com Autocomplete - Logo após o botão */}
+          {showManualInput && (
+            <Card className="border-accent/30">
+              <CardContent className="p-4 space-y-3">
+                <ProductAutocomplete
+                  value={manualInput}
+                  onChange={setManualInput}
+                  onProductSelect={(product) => {
+                    onProductSelect?.(product);
+                    onBarcodeScanned(product.code);
+                    setManualInput('');
+                    setShowManualInput(false);
+                  }}
+                  onSubmit={handleManualSubmit}
+                  placeholder="Digite código ou nome do produto..."
+                />
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Scanner Principal */}
@@ -228,25 +250,6 @@ export function Scanner({ onBarcodeScanned, products = [], onProductSelect }: Sc
           </CardContent>
         </Card>
 
-        {/* Input Manual com Autocomplete */}
-        {showManualInput && (
-          <Card className="border-accent/30">
-            <CardContent className="p-4 space-y-3">
-              <ProductAutocomplete
-                value={manualInput}
-                onChange={setManualInput}
-                onProductSelect={(product) => {
-                  onProductSelect?.(product);
-                  onBarcodeScanned(product.code);
-                  setManualInput('');
-                  setShowManualInput(false);
-                }}
-                onSubmit={handleManualSubmit}
-                placeholder="Digite código ou nome do produto..."
-              />
-            </CardContent>
-          </Card>
-        )}
 
         {/* Dicas para melhorar a leitura */}
         {showTips && (
