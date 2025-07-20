@@ -224,6 +224,7 @@ export function Scanner({ onBarcodeScanned, products = [], onProductSelect }: Sc
                 onClick={handleScanPress}
                 className="w-full text-lg py-6"
                 disabled={false}
+                data-scanner-button
               >
                 {(isExternalMode && isListening) || (!isExternalMode && isScanning) ? (
                   <>

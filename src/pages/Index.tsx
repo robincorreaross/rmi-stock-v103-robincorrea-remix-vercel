@@ -12,7 +12,8 @@ import { useStock } from '@/hooks/useStock';
 import { useProducts } from '@/hooks/useProducts';
 import { ProductFormData, Product } from '@/types/product';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Package, BarChart3 } from 'lucide-react';
+import { Package, BarChart3, Scan } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   // Add console log to track component mounting
@@ -181,6 +182,14 @@ const Index = () => {
           </div>
 
           <TabsContent value="count" className="space-y-6">
+            {/* Lista de Stock - Movida para cima */}
+            <StockList 
+              items={items}
+              onUpdateQuantity={updateQuantity}
+              onRemoveItem={removeItem}
+              onClearAll={clearAll}
+            />
+            
             <Scanner 
               onBarcodeScanned={handleBarcodeScanned}
               products={products}
@@ -188,13 +197,6 @@ const Index = () => {
                 // Quando um produto é selecionado via autocomplete
                 setPendingBarcode(product.code);
               }}
-            />
-            
-            <StockList 
-              items={items}
-              onUpdateQuantity={updateQuantity}
-              onRemoveItem={removeItem}
-              onClearAll={clearAll}
             />
           </TabsContent>
 
@@ -282,6 +284,24 @@ const Index = () => {
           setShowProductNotFound(false);
         }}
       />
+
+      {/* Botão Flutuante para Scanner */}
+      <div className="fixed bottom-6 left-6 z-40">
+        <Button
+          onClick={() => {
+            // Simula um clique no botão do scanner
+            const scannerButton = document.querySelector('[data-scanner-button]') as HTMLButtonElement;
+            if (scannerButton) {
+              scannerButton.click();
+            }
+          }}
+          size="lg"
+          className="w-16 h-16 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-primary hover:scale-110 animate-pulse"
+          title="Iniciar Scanner"
+        >
+          <Scan className="w-8 h-8 text-primary-foreground" />
+        </Button>
+      </div>
     </div>
   );
 };
