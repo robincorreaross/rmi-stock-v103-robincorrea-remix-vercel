@@ -163,6 +163,40 @@ export function Scanner({ onBarcodeScanned, products = [], onProductSelect }: Sc
           </Badge>
         </div>
 
+        {/* Campo de Input Manual/Busca - Posição Estratégica */}
+        <Card className="border-accent/30">
+          <CardContent className="p-4 space-y-3">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-2">
+                <Keyboard className="w-4 h-4 text-accent" />
+                <span className="font-medium text-foreground">Insira o Código ou Faça uma Busca</span>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowManualInput(!showManualInput)}
+              >
+                {showManualInput ? <X className="w-4 h-4" /> : <Keyboard className="w-4 h-4" />}
+              </Button>
+            </div>
+            
+            {showManualInput && (
+              <ProductAutocomplete
+                value={manualInput}
+                onChange={setManualInput}
+                onProductSelect={(product) => {
+                  onProductSelect?.(product);
+                  onBarcodeScanned(product.code);
+                  setManualInput('');
+                  setShowManualInput(false);
+                }}
+                onSubmit={handleManualSubmit}
+                placeholder="Digite código ou nome do produto..."
+              />
+            )}
+          </CardContent>
+        </Card>
+
         {/* Scanner Principal */}
         <Card className="border-2 border-primary/20 shadow-card bg-gradient-to-br from-card to-primary/5">
           <CardContent className="p-6 text-center space-y-4">
@@ -204,24 +238,14 @@ export function Scanner({ onBarcodeScanned, products = [], onProductSelect }: Sc
                 )}
               </Button>
 
-              <div className="flex space-x-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowManualInput(!showManualInput)}
-                  className="flex-1"
-                >
-                  <Keyboard className="w-4 h-4 mr-2" />
-                  Insira o Código ou Faça uma Busca
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowTips(!showTips)}
-                  className="px-3"
-                >
-                  <Lightbulb className="w-4 h-4" />
-                </Button>
-              </div>
+              <Button 
+                variant="outline" 
+                onClick={() => setShowTips(!showTips)}
+                className="w-full"
+              >
+                <Lightbulb className="w-4 h-4 mr-2" />
+                Dicas para melhor leitura
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -259,25 +283,6 @@ export function Scanner({ onBarcodeScanned, products = [], onProductSelect }: Sc
           </Card>
         )}
 
-        {/* Input Manual com Autocomplete */}
-        {showManualInput && (
-          <Card className="border-accent/30">
-            <CardContent className="p-4 space-y-3">
-              <ProductAutocomplete
-                value={manualInput}
-                onChange={setManualInput}
-                onProductSelect={(product) => {
-                  onProductSelect?.(product);
-                  onBarcodeScanned(product.code);
-                  setManualInput('');
-                  setShowManualInput(false);
-                }}
-                onSubmit={handleManualSubmit}
-                placeholder="Digite código ou nome do produto..."
-              />
-            </CardContent>
-          </Card>
-        )}
       </div>
 
       {/* Overlay Full Screen para Scanner - apenas para modo câmera */}
