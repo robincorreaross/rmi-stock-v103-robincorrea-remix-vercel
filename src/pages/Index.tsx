@@ -296,7 +296,7 @@ const Index = () => {
             }
           }}
           size="lg"
-          className="w-16 h-16 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-primary hover:scale-110 animate-pulse"
+          className="w-16 h-16 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-primary hover:scale-110"
           title="Iniciar Scanner"
         >
           <Scan className="w-8 h-8 text-primary-foreground" />
