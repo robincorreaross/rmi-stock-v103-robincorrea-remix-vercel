@@ -21,6 +21,26 @@ const Index = () => {
     console.log('Index component mounted');
   }, []);
 
+  // Função para tocar beep de sucesso
+  const playSuccessBeep = () => {
+    // Cria um beep usando AudioContext
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime); // Tom agudo
+    oscillator.type = 'sine';
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.3);
+  };
+
   const [pendingBarcode, setPendingBarcode] = useState<string | null>(null);
   const [showProductNotFound, setShowProductNotFound] = useState(false);
   const [unregisteredBarcode, setUnregisteredBarcode] = useState<string>('');
@@ -88,6 +108,9 @@ const Index = () => {
       // Se não existe na lista, adiciona novo item
       addItem(barcode, 1);
     }
+    
+    // Toca beep de sucesso quando produto cadastrado é adicionado
+    playSuccessBeep();
   };
 
   const getPendingProduct = async () => {
@@ -108,6 +131,8 @@ const Index = () => {
         addItem(pendingBarcode, 1);
       }
       
+      // Toca beep de sucesso quando produto é confirmado
+      playSuccessBeep();
       setPendingBarcode(null);
     }
   };
@@ -270,6 +295,8 @@ const Index = () => {
           } else {
             addItem(unregisteredBarcode, 1);
           }
+          // Toca beep de sucesso quando produto é cadastrado e adicionado
+          playSuccessBeep();
           setShowProductNotFound(false);
         }}
         onCancel={() => setShowProductNotFound(false)}
@@ -281,6 +308,8 @@ const Index = () => {
           } else {
             addItem(unregisteredBarcode, 1);
           }
+          // Toca beep de sucesso quando produto é adicionado sem cadastro
+          playSuccessBeep();
           setShowProductNotFound(false);
         }}
       />
