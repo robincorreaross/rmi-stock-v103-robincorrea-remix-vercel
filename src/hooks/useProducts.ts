@@ -250,10 +250,7 @@ export function useProducts() {
       // Removido toast informativo
 
       const { data, error } = await supabase.functions.invoke('import-products', {
-        body: { content },
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8'
-        }
+        body: JSON.stringify({ content })
       });
 
       if (error) {
