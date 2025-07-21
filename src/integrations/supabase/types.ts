@@ -14,36 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      plans: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          period: string
-          price: number
-          product_limit: number | null
-          stock_count_limit: number | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          period: string
-          price: number
-          product_limit?: number | null
-          stock_count_limit?: number | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          period?: string
-          price?: number
-          product_limit?: number | null
-          stock_count_limit?: number | null
-        }
-        Relationships: []
-      }
       products: {
         Row: {
           code: string
@@ -51,7 +21,6 @@ export type Database = {
           description: string
           id: string
           updated_at: string
-          user_id: string | null
         }
         Insert: {
           code: string
@@ -59,7 +28,6 @@ export type Database = {
           description: string
           id?: string
           updated_at?: string
-          user_id?: string | null
         }
         Update: {
           code?: string
@@ -67,61 +35,6 @@ export type Database = {
           description?: string
           id?: string
           updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          created_at: string
-          email: string | null
-          full_name: string | null
-          id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          email?: string | null
-          full_name?: string | null
-          id?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          email?: string | null
-          full_name?: string | null
-          id?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      stock_counts: {
-        Row: {
-          counter_name: string
-          created_at: string
-          id: string
-          name: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          counter_name: string
-          created_at?: string
-          id?: string
-          name: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          counter_name?: string
-          created_at?: string
-          id?: string
-          name?: string
-          updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }
@@ -130,32 +43,21 @@ export type Database = {
           barcode: string
           id: string
           quantity: number
-          stock_count_id: string | null
           timestamp: string
         }
         Insert: {
           barcode: string
           id?: string
           quantity?: number
-          stock_count_id?: string | null
           timestamp?: string
         }
         Update: {
           barcode?: string
           id?: string
           quantity?: number
-          stock_count_id?: string | null
           timestamp?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "stock_items_stock_count_id_fkey"
-            columns: ["stock_count_id"]
-            isOneToOne: false
-            referencedRelation: "stock_counts"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       teste: {
         Row: {
@@ -174,44 +76,6 @@ export type Database = {
           teste?: boolean | null
         }
         Relationships: []
-      }
-      user_plans: {
-        Row: {
-          created_at: string
-          expires_at: string | null
-          id: string
-          is_active: boolean
-          plan_id: string
-          started_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean
-          plan_id: string
-          started_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean
-          plan_id?: string
-          started_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_plans_plan_id_fkey"
-            columns: ["plan_id"]
-            isOneToOne: false
-            referencedRelation: "plans"
-            referencedColumns: ["id"]
-          },
-        ]
       }
     }
     Views: {

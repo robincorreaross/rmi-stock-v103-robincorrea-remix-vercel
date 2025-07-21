@@ -76,15 +76,11 @@ export function useProducts() {
 
   const addProduct = async (data: ProductFormData): Promise<boolean> => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Usuário não autenticado');
-
       const { error } = await supabase
         .from('products')
         .insert({
         code: data.code.toUpperCase(),
-        description: data.description.toUpperCase().substring(0, 200),
-        user_id: user.id
+        description: data.description.toUpperCase().substring(0, 200)
         });
 
       if (error) {

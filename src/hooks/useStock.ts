@@ -18,23 +18,15 @@ export function useStock() {
 
   const loadStockItems = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
       const { data, error } = await supabase
         .from('stock_items')
-        .select(`
-          *,
-          stock_counts!inner(user_id)
-        `)
+        .select('*')
         .order('timestamp', { ascending: false });
 
       if (error) throw error;
 
       const formattedItems = data.map(item => ({
-        id: item.id,
-        barcode: item.barcode,
-        quantity: item.quantity,
+        ...item,
         timestamp: new Date(item.timestamp)
       }));
 
@@ -51,41 +43,11 @@ export function useStock() {
 
   const addItem = async (barcode: string, quantity: number = 1) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Usuário não autenticado');
-
-      // Por enquanto, vamos usar um stock_count_id default
-      // Em versão futura, isso será selecionado pelo usuário
-      const { data: stockCounts } = await supabase
-        .from('stock_counts')
-        .select('id')
-        .eq('user_id', user.id)
-        .limit(1);
-
-      let stockCountId = stockCounts?.[0]?.id;
-
-      // Se não houver nenhuma contagem, criar uma padrão
-      if (!stockCountId) {
-        const { data: newCount, error: countError } = await supabase
-          .from('stock_counts')
-          .insert({
-            user_id: user.id,
-            name: 'Contagem Padrão',
-            counter_name: 'Sistema'
-          })
-          .select('id')
-          .single();
-        
-        if (countError) throw countError;
-        stockCountId = newCount.id;
-      }
-
       const { error } = await supabase
         .from('stock_items')
         .insert({
           barcode,
-          quantity,
-          stock_count_id: stockCountId
+          quantity
         });
 
       if (error) throw error;
