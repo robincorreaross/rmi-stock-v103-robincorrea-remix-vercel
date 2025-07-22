@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Header } from "@/components/Header";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { User, Session } from "@supabase/supabase-js";
 
@@ -33,6 +33,9 @@ interface Profile {
   id: string;
   full_name: string | null;
   email: string | null;
+  company_name: string | null;
+  company_document: string | null;
+  company_address: string | null;
 }
 
 export const Profile = () => {
@@ -44,6 +47,9 @@ export const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [fullName, setFullName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [companyDocument, setCompanyDocument] = useState("");
+  const [companyAddress, setCompanyAddress] = useState("");
   const [newCountName, setNewCountName] = useState("");
   const [counterName, setCounterName] = useState("");
   const [showNewCountDialog, setShowNewCountDialog] = useState(false);
@@ -90,6 +96,9 @@ export const Profile = () => {
       if (profileError) throw profileError;
       setProfile(profileData);
       setFullName(profileData.full_name || "");
+      setCompanyName(profileData.company_name || "");
+      setCompanyDocument(profileData.company_document || "");
+      setCompanyAddress(profileData.company_address || "");
 
       // Fetch user plan
       const { data: userPlanData, error: userPlanError } = await supabase
@@ -132,7 +141,12 @@ export const Profile = () => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ full_name: fullName })
+        .update({ 
+          full_name: fullName,
+          company_name: companyName,
+          company_document: companyDocument,
+          company_address: companyAddress
+        })
         .eq('user_id', user!.id);
 
       if (error) throw error;
@@ -207,24 +221,19 @@ export const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header 
-        totalItems={0}
-        totalQuantity={0}
-        onExport={() => {}}
-        isExporting={false}
-      />
-      <div className="container mx-auto p-4 max-w-4xl">
+    <DashboardLayout title="Meu Perfil" showBackButton backTo="/">
+      <div className="p-6 max-w-4xl mx-auto">
         <div className="mb-6">
           <h1 className="text-3xl font-bold">Meu Perfil</h1>
           <p className="text-muted-foreground">
-            Gerencie suas informações pessoais e plano
+            Gerencie suas informações pessoais e da empresa
           </p>
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList>
             <TabsTrigger value="profile">Informações Pessoais</TabsTrigger>
+            <TabsTrigger value="company">Empresa</TabsTrigger>
             <TabsTrigger value="plan">Meu Plano</TabsTrigger>
             <TabsTrigger value="counts">Contagens</TabsTrigger>
           </TabsList>
@@ -260,14 +269,54 @@ export const Profile = () => {
                       O email não pode ser alterado
                     </p>
                   </div>
-                  <div className="flex gap-4">
-                    <Button type="submit" disabled={updating}>
-                      {updating ? "Salvando..." : "Salvar Alterações"}
-                    </Button>
-                    <Button type="button" variant="outline" onClick={handleSignOut}>
-                      Sair
-                    </Button>
+                  <Button type="submit" disabled={updating}>
+                    {updating ? "Salvando..." : "Salvar Alterações"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="company">
+            <Card>
+              <CardHeader>
+                <CardTitle>Informações da Empresa</CardTitle>
+                <CardDescription>
+                  Atualize as informações da sua empresa
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleUpdateProfile} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="companyName">Nome da Empresa</Label>
+                    <Input
+                      id="companyName"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      placeholder="Nome fantasia ou razão social"
+                    />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyDocument">CNPJ</Label>
+                    <Input
+                      id="companyDocument"
+                      value={companyDocument}
+                      onChange={(e) => setCompanyDocument(e.target.value)}
+                      placeholder="00.000.000/0000-00"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyAddress">Endereço</Label>
+                    <Input
+                      id="companyAddress"
+                      value={companyAddress}
+                      onChange={(e) => setCompanyAddress(e.target.value)}
+                      placeholder="Endereço completo da empresa"
+                    />
+                  </div>
+                  <Button type="submit" disabled={updating}>
+                    {updating ? "Salvando..." : "Salvar Alterações"}
+                  </Button>
                 </form>
               </CardContent>
             </Card>
@@ -425,6 +474,6 @@ export const Profile = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
