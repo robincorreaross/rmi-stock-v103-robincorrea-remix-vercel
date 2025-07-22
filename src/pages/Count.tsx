@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { DashboardLayout } from '@/components/DashboardLayout';
 import { Scanner } from '@/components/Scanner';
 import { StockList } from '@/components/StockList';
 import { BarcodeConfirmation } from '@/components/BarcodeConfirmation';
@@ -9,7 +8,8 @@ import { useStock } from '@/hooks/useStock';
 import { useProducts } from '@/hooks/useProducts';
 import { ProductFormData } from '@/types/product';
 import { Button } from '@/components/ui/button';
-import { Scan } from 'lucide-react';
+import { Scan, ArrowLeft, LogOut } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Count = () => {
   const navigate = useNavigate();
@@ -97,12 +97,42 @@ const Count = () => {
     setPendingBarcode(null);
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+  };
+
   return (
-    <DashboardLayout 
-      title="Contagem de Estoque" 
-      showBackButton 
-      backTo="/"
-    >
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="flex h-16 items-center justify-between px-6">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Voltar
+            </Button>
+            <div>
+              <h1 className="text-xl font-semibold">Contagem de Estoque</h1>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSignOut}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Sair
+          </Button>
+        </div>
+      </header>
+
       <div className="p-6 space-y-6 max-w-4xl mx-auto">
         {/* Lista de Stock */}
         <StockList 
@@ -175,7 +205,7 @@ const Count = () => {
           </Button>
         </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
 

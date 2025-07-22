@@ -7,10 +7,12 @@ import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { User, Session } from "@supabase/supabase-js";
-import { Package, BarChart3, Plus, Clock, Users } from "lucide-react";
+import { Package, BarChart3, Plus, Clock, Users, LogOut } from "lucide-react";
 
 interface Plan {
   id: string;
@@ -163,6 +165,11 @@ export const Dashboard = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+  };
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -186,176 +193,206 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Welcome Section */}
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold">
-          {getGreeting()}, {profile?.full_name || 'Usuário'}! 👋
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          Bem-vindo ao seu painel de controle do RMI-Stock
-        </p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
-        {/* Current Plan Card */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Plano Atual</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <Badge variant="secondary" className="text-lg px-3 py-1">
-                {userPlan?.plan.name}
-              </Badge>
-              {userPlan?.plan.name !== 'Free' && (
-                <p className="text-sm text-muted-foreground">
-                  {formatPrice(userPlan.plan.price)}/{userPlan.plan.period === 'monthly' ? 'mês' : 'ano'}
-                </p>
-              )}
-              <div className="text-xs text-muted-foreground">
-                Produtos: {userPlan?.plan.product_limit ? `${userPlan.plan.product_limit} restantes` : 'Ilimitado'}
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <header className="h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+            <div className="flex h-16 items-center justify-between px-6">
+              <div className="flex items-center gap-4">
+                <SidebarTrigger />
+                <div>
+                  <h1 className="text-xl font-semibold">Dashboard</h1>
+                </div>
               </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSignOut}
+                className="flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                Sair
+              </Button>
             </div>
-          </CardContent>
-        </Card>
+          </header>
 
-        {/* Active Counts Card */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Contagens Ativas</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stockCounts.length}</div>
-            <p className="text-xs text-muted-foreground">
-              {userPlan?.plan.stock_count_limit ? 
-                `${userPlan.plan.stock_count_limit - stockCounts.length} restantes` : 
-                'Ilimitado'
-              }
-            </p>
-          </CardContent>
-        </Card>
+          {/* Main Content */}
+          <main className="flex-1 p-6 space-y-6">
+            {/* Welcome Section */}
+            <div className="space-y-2">
+              <h1 className="text-3xl font-bold">
+                {getGreeting()}, {profile?.full_name || 'Usuário'}! 👋
+              </h1>
+              <p className="text-muted-foreground text-lg">
+                Bem-vindo ao seu painel de controle do RMI-Stock
+              </p>
+            </div>
 
-        {/* Quick Actions Card */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ações Rápidas</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <Dialog open={showNewCountDialog} onOpenChange={setShowNewCountDialog}>
-              <DialogTrigger asChild>
-                <Button className="w-full" size="sm">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Nova Contagem
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Criar Nova Contagem</DialogTitle>
-                  <DialogDescription>
-                    Preencha os dados para criar uma nova contagem de estoque
-                  </DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleCreateNewCount}>
+            {/* Stats Cards */}
+            <div className="grid gap-4 md:grid-cols-3">
+              {/* Current Plan Card */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Plano Atual</CardTitle>
+                  <Package className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <Badge variant="secondary" className="text-lg px-3 py-1">
+                      {userPlan?.plan.name}
+                    </Badge>
+                    {userPlan?.plan.name !== 'Free' && (
+                      <p className="text-sm text-muted-foreground">
+                        {formatPrice(userPlan.plan.price)}/{userPlan.plan.period === 'monthly' ? 'mês' : 'ano'}
+                      </p>
+                    )}
+                    <div className="text-xs text-muted-foreground">
+                      Produtos: {userPlan?.plan.product_limit ? `${userPlan.plan.product_limit} restantes` : 'Ilimitado'}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Active Counts Card */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Contagens Ativas</CardTitle>
+                  <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stockCounts.length}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {userPlan?.plan.stock_count_limit ? 
+                      `${userPlan.plan.stock_count_limit - stockCounts.length} restantes` : 
+                      'Ilimitado'
+                    }
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions Card */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Ações Rápidas</CardTitle>
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <Dialog open={showNewCountDialog} onOpenChange={setShowNewCountDialog}>
+                    <DialogTrigger asChild>
+                      <Button className="w-full" size="sm">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Nova Contagem
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Criar Nova Contagem</DialogTitle>
+                        <DialogDescription>
+                          Preencha os dados para criar uma nova contagem de estoque
+                        </DialogDescription>
+                      </DialogHeader>
+                      <form onSubmit={handleCreateNewCount}>
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="countName">Nome da Contagem</Label>
+                            <Input
+                              id="countName"
+                              placeholder="Ex: Estoque Janeiro 2024"
+                              value={newCountName}
+                              onChange={(e) => setNewCountName(e.target.value)}
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="counterName">Nome do Contador</Label>
+                            <Input
+                              id="counterName"
+                              placeholder="Nome da pessoa que irá contar"
+                              value={counterName}
+                              onChange={(e) => setCounterName(e.target.value)}
+                              required
+                            />
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            <p><strong>Data e hora:</strong> {new Date().toLocaleString('pt-BR')}</p>
+                          </div>
+                        </div>
+                        <DialogFooter className="mt-6">
+                          <Button type="button" variant="outline" onClick={() => setShowNewCountDialog(false)}>
+                            Cancelar
+                          </Button>
+                          <Button type="submit">
+                            Criar Contagem
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recent Counts Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5" />
+                  Contagens Recentes
+                </CardTitle>
+                <CardDescription>
+                  Suas contagens de estoque mais recentes
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {stockCounts.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p className="text-lg font-medium">Nenhuma contagem criada ainda</p>
+                    <p className="text-sm">Crie sua primeira contagem para começar a usar o sistema</p>
+                  </div>
+                ) : (
                   <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="countName">Nome da Contagem</Label>
-                      <Input
-                        id="countName"
-                        placeholder="Ex: Estoque Janeiro 2024"
-                        value={newCountName}
-                        onChange={(e) => setNewCountName(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="counterName">Nome do Contador</Label>
-                      <Input
-                        id="counterName"
-                        placeholder="Nome da pessoa que irá contar"
-                        value={counterName}
-                        onChange={(e) => setCounterName(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      <p><strong>Data e hora:</strong> {new Date().toLocaleString('pt-BR')}</p>
-                    </div>
+                    {stockCounts.slice(0, 5).map((count) => (
+                      <div key={count.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                        <div className="space-y-1">
+                          <h4 className="font-medium">{count.name}</h4>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <Users className="w-4 h-4" />
+                              {count.counter_name}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {new Date(count.created_at).toLocaleString('pt-BR')}
+                            </span>
+                          </div>
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate('/count', { state: { stockCountId: count.id } })}
+                        >
+                          Continuar
+                        </Button>
+                      </div>
+                    ))}
+                    {stockCounts.length > 5 && (
+                      <div className="text-center pt-4">
+                        <Button variant="ghost" onClick={() => navigate('/counts')}>
+                          Ver todas as contagens
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                  <DialogFooter className="mt-6">
-                    <Button type="button" variant="outline" onClick={() => setShowNewCountDialog(false)}>
-                      Cancelar
-                    </Button>
-                    <Button type="submit">
-                      Criar Contagem
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </CardContent>
-        </Card>
+                )}
+              </CardContent>
+            </Card>
+          </main>
+        </div>
       </div>
-
-      {/* Recent Counts Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="w-5 h-5" />
-            Contagens Recentes
-          </CardTitle>
-          <CardDescription>
-            Suas contagens de estoque mais recentes
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {stockCounts.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium">Nenhuma contagem criada ainda</p>
-              <p className="text-sm">Crie sua primeira contagem para começar a usar o sistema</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {stockCounts.slice(0, 5).map((count) => (
-                <div key={count.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className="space-y-1">
-                    <h4 className="font-medium">{count.name}</h4>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
-                        {count.counter_name}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {new Date(count.created_at).toLocaleString('pt-BR')}
-                      </span>
-                    </div>
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => navigate('/count', { state: { stockCountId: count.id } })}
-                  >
-                    Continuar
-                  </Button>
-                </div>
-              ))}
-              {stockCounts.length > 5 && (
-                <div className="text-center pt-4">
-                  <Button variant="ghost" onClick={() => navigate('/counts')}>
-                    Ver todas as contagens
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+    </SidebarProvider>
   );
 };

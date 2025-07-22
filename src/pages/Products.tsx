@@ -3,11 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { ProductForm } from '@/components/ProductForm';
 import { ProductList } from '@/components/ProductList';
 import { ProductImport } from '@/components/ProductImport';
-import { Header } from '@/components/Header';
 import { useProducts } from '@/hooks/useProducts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Plus, Package, Upload, List } from 'lucide-react';
+import { Plus, Package, Upload, List, ArrowLeft, LogOut } from 'lucide-react';
 import { Product } from '@/types/product';
 import { supabase } from '@/integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
@@ -103,7 +102,11 @@ export const Products = () => {
     return imported;
   };
 
-  // Show loading while checking auth
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -112,19 +115,40 @@ export const Products = () => {
     );
   }
 
-  // Don't render if user is not authenticated
   if (!user) {
     return null;
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <Header 
-        totalItems={totalProducts} 
-        totalQuantity={0} 
-        onExport={() => {}} 
-        isExporting={false} 
-      />
+      {/* Header */}
+      <header className="h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="flex h-16 items-center justify-between px-6">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Voltar
+            </Button>
+            <div>
+              <h1 className="text-xl font-semibold">Produtos</h1>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSignOut}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Sair
+          </Button>
+        </div>
+      </header>
       
       <div className="container mx-auto px-4 py-6 max-w-6xl">
         <div className="mb-6">

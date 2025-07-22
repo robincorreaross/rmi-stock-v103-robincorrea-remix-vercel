@@ -9,9 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { DashboardLayout } from "@/components/DashboardLayout";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { User, Session } from "@supabase/supabase-js";
+import { ArrowLeft, LogOut } from "lucide-react";
 
 interface Plan {
   id: string;
@@ -238,7 +238,36 @@ export const Profile = () => {
   }
 
   return (
-    <DashboardLayout title="Meu Perfil" showBackButton backTo="/">
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="flex h-16 items-center justify-between px-6">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Voltar
+            </Button>
+            <div>
+              <h1 className="text-xl font-semibold">Meu Perfil</h1>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSignOut}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Sair
+          </Button>
+        </div>
+      </header>
+
       <div className="p-6 max-w-4xl mx-auto">
         <div className="mb-6">
           <h1 className="text-3xl font-bold">Meu Perfil</h1>
@@ -491,6 +520,6 @@ export const Profile = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
