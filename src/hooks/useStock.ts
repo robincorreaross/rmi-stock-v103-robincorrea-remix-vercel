@@ -6,7 +6,7 @@ import { Share } from '@capacitor/share';
 import { useToast } from './use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-export function useStock() {
+export function useStock(stockCountId?: string) {
   const [items, setItems] = useState<StockItem[]>([]);
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
@@ -54,18 +54,21 @@ export function useStock() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Usuário não autenticado');
 
-      // Por enquanto, vamos usar um stock_count_id default
-      // Em versão futura, isso será selecionado pelo usuário
-      const { data: stockCounts } = await supabase
-        .from('stock_counts')
-        .select('id')
-        .eq('user_id', user.id)
-        .limit(1);
+      // Usar stockCountId passado como parâmetro ou buscar um padrão
+      let currentStockCountId = stockCountId;
+      
+      if (!currentStockCountId) {
+        const { data: stockCounts } = await supabase
+          .from('stock_counts')
+          .select('id')
+          .eq('user_id', user.id)
+          .limit(1);
 
-      let stockCountId = stockCounts?.[0]?.id;
+        currentStockCountId = stockCounts?.[0]?.id;
+      }
 
       // Se não houver nenhuma contagem, criar uma padrão
-      if (!stockCountId) {
+      if (!currentStockCountId) {
         const { data: newCount, error: countError } = await supabase
           .from('stock_counts')
           .insert({
@@ -77,7 +80,7 @@ export function useStock() {
           .single();
         
         if (countError) throw countError;
-        stockCountId = newCount.id;
+        currentStockCountId = newCount.id;
       }
 
       const { error } = await supabase
@@ -85,7 +88,7 @@ export function useStock() {
         .insert({
           barcode,
           quantity,
-          stock_count_id: stockCountId
+          stock_count_id: currentStockCountId
         });
 
       if (error) throw error;

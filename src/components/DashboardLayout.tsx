@@ -62,7 +62,7 @@ export const DashboardLayout = ({
   }
 
   return (
-    <SidebarProvider collapsedWidth={56}>
+    <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         

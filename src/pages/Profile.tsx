@@ -31,11 +31,14 @@ interface UserPlan {
 
 interface Profile {
   id: string;
+  user_id: string;
   full_name: string | null;
   email: string | null;
   company_name: string | null;
   company_document: string | null;
   company_address: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export const Profile = () => {
