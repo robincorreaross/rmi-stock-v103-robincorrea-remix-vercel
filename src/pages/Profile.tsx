@@ -97,11 +97,25 @@ export const Profile = () => {
         .single();
 
       if (profileError) throw profileError;
-      setProfile(profileData);
-      setFullName(profileData.full_name || "");
-      setCompanyName(profileData.company_name || "");
-      setCompanyDocument(profileData.company_document || "");
-      setCompanyAddress(profileData.company_address || "");
+      
+      // Ensure all required fields exist with proper typing
+      const completeProfile: Profile = {
+        id: profileData.id,
+        user_id: profileData.user_id,
+        full_name: profileData.full_name,
+        email: profileData.email,
+        company_name: profileData.company_name || null,
+        company_document: profileData.company_document || null,
+        company_address: profileData.company_address || null,
+        created_at: profileData.created_at,
+        updated_at: profileData.updated_at
+      };
+      
+      setProfile(completeProfile);
+      setFullName(completeProfile.full_name || "");
+      setCompanyName(completeProfile.company_name || "");
+      setCompanyDocument(completeProfile.company_document || "");
+      setCompanyAddress(completeProfile.company_address || "");
 
       // Fetch user plan
       const { data: userPlanData, error: userPlanError } = await supabase
