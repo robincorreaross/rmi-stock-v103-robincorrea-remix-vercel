@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Scanner } from '@/components/Scanner';
+import { SimpleScanner } from '@/components/SimpleScanner';
 import { StockList } from '@/components/StockList';
 import { BarcodeConfirmation } from '@/components/BarcodeConfirmation';
 import { ProductNotFoundDialog } from '@/components/ProductNotFoundDialog';
@@ -8,7 +8,7 @@ import { useStock } from '@/hooks/useStock';
 import { useProducts } from '@/hooks/useProducts';
 import { ProductFormData } from '@/types/product';
 import { Button } from '@/components/ui/button';
-import { Scan, ArrowLeft, LogOut } from 'lucide-react';
+import { Scan, ArrowLeft, LogOut, Zap, Play } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const Count = () => {
@@ -38,6 +38,7 @@ const Count = () => {
   const [pendingBarcode, setPendingBarcode] = useState<string | null>(null);
   const [showProductNotFound, setShowProductNotFound] = useState(false);
   const [unregisteredBarcode, setUnregisteredBarcode] = useState<string>('');
+  const [isExternalMode, setIsExternalMode] = useState(false);
   
   const {
     items,
@@ -142,12 +143,13 @@ const Count = () => {
           onClearAll={clearAll}
         />
         
-        <Scanner 
+        <SimpleScanner 
           onBarcodeScanned={handleBarcodeScanned}
           products={products}
           onProductSelect={async (product) => {
             setPendingBarcode(product.code);
           }}
+          onExternalModeChange={setIsExternalMode}
         />
 
         {/* Modal de Confirmação */}
@@ -188,20 +190,29 @@ const Count = () => {
           }}
         />
 
-        {/* Botão Flutuante para Scanner */}
+        {/* Botão Flutuante para Scanner/Leitor */}
         <div className="fixed bottom-6 left-6 z-40">
           <Button
             onClick={() => {
-              const scannerButton = document.querySelector('[data-scanner-button]') as HTMLButtonElement;
-              if (scannerButton) {
-                scannerButton.click();
+              if (isExternalMode) {
+                const scannerButton = document.querySelector('[data-scanner-button]') as HTMLButtonElement;
+                if (scannerButton) {
+                  scannerButton.click();
+                }
+              } else {
+                // Implementar lógica de scanner de câmera se necessário
+                console.log('Scanner de câmera não implementado nesta versão simplificada');
               }
             }}
             size="lg"
             className="w-16 h-16 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-primary hover:scale-110"
-            title="Iniciar Scanner"
+            title={isExternalMode ? "Iniciar Leitor Externo" : "Iniciar Scanner"}
           >
-            <Scan className="w-8 h-8 text-primary-foreground" />
+            {isExternalMode ? (
+              <Zap className="w-8 h-8 text-primary-foreground" />
+            ) : (
+              <Scan className="w-8 h-8 text-primary-foreground" />
+            )}
           </Button>
         </div>
       </div>
