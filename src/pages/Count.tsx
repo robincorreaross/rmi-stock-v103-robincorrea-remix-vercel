@@ -194,22 +194,23 @@ const Count = () => {
         <div className="fixed bottom-6 left-6 z-40">
           <Button
             onClick={() => {
-              if (isExternalMode) {
-                const scannerButton = document.querySelector('[data-scanner-button]') as HTMLButtonElement;
-                if (scannerButton) {
-                  scannerButton.click();
-                }
-              } else {
+              if (!isExternalMode) {
                 // Implementar lógica de scanner de câmera se necessário
                 console.log('Scanner de câmera não implementado nesta versão simplificada');
               }
+              // Não faz nada quando está em modo externo
             }}
             size="lg"
-            className="w-16 h-16 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-primary hover:scale-110"
-            title={isExternalMode ? "Iniciar Leitor Externo" : "Iniciar Scanner"}
+            className={`w-16 h-16 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${
+              isExternalMode 
+                ? 'bg-green-500 hover:bg-green-600 cursor-default' 
+                : 'bg-gradient-primary hover:scale-110 cursor-pointer'
+            }`}
+            title={isExternalMode ? "Leitor Externo Ativo" : "Iniciar Scanner"}
+            disabled={isExternalMode}
           >
             {isExternalMode ? (
-              <Zap className="w-8 h-8 text-primary-foreground" />
+              <Zap className="w-8 h-8 text-white" />
             ) : (
               <Scan className="w-8 h-8 text-primary-foreground" />
             )}
