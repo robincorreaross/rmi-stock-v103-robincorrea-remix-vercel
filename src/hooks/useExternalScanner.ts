@@ -61,15 +61,9 @@ export function useExternalScanner() {
   }, [handleKeyPress, isExternalMode, isListening]);
 
   const startExternalScan = () => {
-    console.log('startExternalScan chamado, isExternalMode:', isExternalMode);
-    if (!isExternalMode) {
-      console.log('Não está em modo externo, abortando');
-      return;
-    }
-    
+    console.log('startExternalScan chamado');
     setIsListening(true);
     setScannedCode('');
-    
     console.log('Leitor externo ativado - aguardando entrada de teclado');
   };
 
