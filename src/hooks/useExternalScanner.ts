@@ -49,14 +49,23 @@ export function useExternalScanner() {
   }, [isExternalMode, isListening, scannedCode]);
 
   useEffect(() => {
+    console.log('useEffect keydown, isExternalMode:', isExternalMode, 'isListening:', isListening);
     if (isExternalMode && isListening) {
+      console.log('Adicionando listener de teclado');
       document.addEventListener('keydown', handleKeyPress);
-      return () => document.removeEventListener('keydown', handleKeyPress);
+      return () => {
+        console.log('Removendo listener de teclado');
+        document.removeEventListener('keydown', handleKeyPress);
+      };
     }
   }, [handleKeyPress, isExternalMode, isListening]);
 
   const startExternalScan = () => {
-    if (!isExternalMode) return;
+    console.log('startExternalScan chamado, isExternalMode:', isExternalMode);
+    if (!isExternalMode) {
+      console.log('Não está em modo externo, abortando');
+      return;
+    }
     
     setIsListening(true);
     setScannedCode('');

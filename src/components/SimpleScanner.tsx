@@ -44,12 +44,15 @@ export function SimpleScanner({
   }, [isExternalMode, onExternalModeChange]);
 
   const handleExternalToggle = (checked: boolean) => {
+    console.log('Toggle leitor externo:', checked);
     setIsExternalMode(checked);
     if (checked) {
       // Ativa automaticamente ao ligar o leitor externo
-      startExternalScan();
+      console.log('Iniciando leitor externo...');
+      setTimeout(() => startExternalScan(), 100); // Pequeno delay para garantir que o estado foi atualizado
     } else if (isListening) {
       // Desativa ao desligar o leitor externo
+      console.log('Parando leitor externo...');
       stopExternalScan();
     }
   };
