@@ -11,19 +11,20 @@ export function useExternalScanner() {
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
     if (!isExternalMode || !isListening) return;
     
+    console.log('Tecla capturada:', event.key);
+    
     // Previne o comportamento padrão para evitar interferência
     event.preventDefault();
     
     // Enter indica fim da leitura do código
     if (event.key === 'Enter') {
       if (scannedCode.trim()) {
+        console.log('Código lido completo:', scannedCode.trim());
         // Dispara evento customizado com o código lido
         const scanEvent = new CustomEvent('externalScanComplete', {
           detail: { barcode: scannedCode.trim() }
         });
         window.dispatchEvent(scanEvent);
-        
-        // Removido toast de sucesso - apenas callback
         
         setScannedCode('');
       }
@@ -40,8 +41,12 @@ export function useExternalScanner() {
     }
     
     // Adiciona caractere ao código
-    setScannedCode(prev => prev + event.key);
-  }, [isExternalMode, isListening, scannedCode, toast]);
+    setScannedCode(prev => {
+      const newCode = prev + event.key;
+      console.log('Código sendo formado:', newCode);
+      return newCode;
+    });
+  }, [isExternalMode, isListening, scannedCode]);
 
   useEffect(() => {
     if (isExternalMode && isListening) {
@@ -56,7 +61,7 @@ export function useExternalScanner() {
     setIsListening(true);
     setScannedCode('');
     
-    // Removido toast informativo
+    console.log('Leitor externo ativado - aguardando entrada de teclado');
   };
 
   const stopExternalScan = () => {

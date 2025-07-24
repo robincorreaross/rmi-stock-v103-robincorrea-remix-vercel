@@ -27,7 +27,9 @@ export function SimpleScanner({
   // Escuta eventos do leitor externo
   useEffect(() => {
     const handleExternalScan = (event: any) => {
+      console.log('Evento externalScanComplete recebido:', event.detail);
       if (isExternalMode && event.detail?.barcode) {
+        console.log('Processando código:', event.detail.barcode);
         onBarcodeScanned(event.detail.barcode);
       }
     };
